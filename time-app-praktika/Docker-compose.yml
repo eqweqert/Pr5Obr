@@ -1,0 +1,35 @@
+version: '3' #объявляет версию docker-compose
+
+services: #определяются все контейнеры, которые запускаются с помощью docker-compose
+
+  api: #Настройки арі 
+
+    restart: always #всегда будет перезапускаться
+    build: ./api #путь сборки
+
+    ports: #порт
+      - 5555:5000 
+    depends_on: #указывает зависимости между сервисами,чтобы гарантировать, что один сервис запускается только после запуска другого
+      - mysql
+  frontend: #Настройки frontend 
+    restart: always #всегда будет перезапускаться
+    build: ./frontend #путь сборки
+    ports:  #порт
+      - 8954:8954
+  mysql: #Настройки mysql 
+    restart: always #всегда будет перезапускаться
+    image: mysql #Docker-образ
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=time_db
+    volumes: #указывает тома, чтобы сохранить данные между запусками контейнеров
+      - mysql_data:/var/lib/mysql 
+  adminer: #Настройки adminer
+    restart: always #всегда будет перезапускаться
+    image: adminer #Docker-образ
+    ports: #порт
+      - 8888:8080
+    depends_on: #указать зависимости между сервисами
+      - mysql
+volumes: #указывает тома, чтобы сохранить данные между запусками контейнеров
+  mysql_data:
